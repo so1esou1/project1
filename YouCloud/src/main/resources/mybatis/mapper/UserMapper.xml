@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youcloud.mapper.UserMapper">
+    <cache/>
+    <resultMap id="BaseResultMap" type="com.youcloud.pojo.User">
+        <id column="user_id" property="userID" />
+        <result column="user_nick" property="userNick" />
+        <result column="user_password" property="userPassword" />
+        <result column="user_mail" property="userEmail" />
+        <result column="user_addr" property="userAddr" />
+        <result column="user_contact" property="userContact" />
+        <result column="user_profile" property="userProfile"/>
+        <result column="user_role" property="userRole"/>
+
+
+        <collection property="circles" ofType="com.youcloud.pojo.Circle">
+            <id property="circleID" column="circle_id"/>
+            <result column="circle_name" property="circleName" />
+            <result column="circle_password" property="circlePassword" />
+            <result column="cap" property="cap" />
+            <result column="cap_used" property="capUsed" />
+            <result column="cap_level" property="capLevel" />
+        </collection>
+
+    </resultMap>
+
+    <!--所有的字段-->
+    <sql id="allColum">user_id,user_nick,user_password,user_mail,user_addr,user_contact,user_profile,user_role</sql>
+
+
+    <!--增加一个用户,需要输入id和密码-->
+    <insert id="addUser" parameterType="com.youcloud.pojo.User" >
+        insert into youcloud.user (user_id,user_password,user_mail,user_nick,user_role)
+        values
+        (#{userID},#{userPassword},#{userEmail},#{userID},#{userRole});
+    </insert>
+
+    <!--根据id删除用户-->
+    <delete id="deleteByID" parameterType="Integer" >
+        delete from youcloud.user
+        <where>
+            user_id = #{userID}
+        </where>
+    </delete>
+
+    <!--根据昵称删除用户-->
+    <delete id="deleteByNick" parameterType="String">
+        delete from youcloud.user
+        <where>
+            user_nick = #{userNick}
+        </where>
+    </delete>
+
+    <!--根据id查询用户-->
+    <select id="queryByID" parameterType="Integer" resultMap="BaseResultMap">
+        select
+        <include refid="allColum"></include>
+        from youcloud.user
+        <where>
+            user_id = #{userID}
+        </where>
+    </select>
+
+    <!--根据昵称查询用户信息-->
+    <select id="queryByNick" parameterType="String" resultMap="BaseResultMap">
+        select
+        <include refid="allColum"></include>
+        from youcloud.user
+        <where>
+            user_nick = #{userNick}
+        </where>
+    </select>
+
+    <!--查询全部数据-->
+    <select id="queryAll" resultMap="BaseResultMap" resultType="list">
+        select
+        <include refid="allColum"></include>
+        from youcloud.user
+    </select>
+
+
+    <!--通过用户id修改用户信息-->
+    <update id="updateUser" parameterType="com.youcloud.pojo.User">
+        update youcloud.user
+        <set>
+            <include refid="allColum"></include>
+        </set>
+        <where>
+            user_id = #{userID}
+        </where>
+    </update>
+
+    <!--通过用户id获取其邮箱-->
+    <select id="queryEmailById" parameterType="String" resultMap="BaseResultMap" >
+        select user_mail from youcloud.user where user_id = #{userID}
+    </select>
+
+    <select id="getUserByEmail" parameterType="String" resultMap="BaseResultMap" >
+        select
+        <include refid="allColum"></include>
+        from youcloud.user
+        <where>
+            user_mail = #{userEmail}
+        </where>
+    </select>
+
+
+    <update id="changeUser">
+        update youcloud.user
+        set user_nick=#{userNick},user_password=#{userPassword},user_mail=#{userEmail},user_addr=#{userAddr},user_contact=#{userContact}
+        where user_id=#{userID}
+    </update>
+
+
+</mapper>

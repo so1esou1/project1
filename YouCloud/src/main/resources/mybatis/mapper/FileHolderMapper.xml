@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youcloud.mapper.FileHolderMapper">
+    <cache/>
+    <resultMap id="BaseResultMap" type="com.youcloud.pojo.FileHolder">
+        <id column="file_name" property="fileName" />
+        <result column="file_cap" property="fileCap" />
+        <result column="file_circle_id" property="fileCircleID" />
+    </resultMap>
+    
+    <sql id="FileData">file_name,file_cap,file_circle_id</sql>
+
+    <!--添加一个文件夹-->
+    <insert id="addFileHolder" parameterType="com.youcloud.pojo.FileHolder">
+        insert into youcloud.fileholder (file_name,file_cap,file_circle_id) values (#{fileName},#{fileCap},#{fileCircleID});
+    </insert>
+
+
+    <!--通过朋友圈id查询文件夹-->
+    <select id="queryFileHolderByCircle" parameterType="Integer" resultMap="BaseResultMap">
+        select
+        <include refid="FileData" ></include>
+        from youcloud.fileholder
+        <where>
+            file_circle_id = #{fileCircleID}
+        </where>
+    </select>
+
+    <!--通过文件夹名字查询文件夹-->
+    <select id="queryFileHolderByFileHolder" parameterType="String" resultMap="BaseResultMap" resultType="list">
+        select
+        <include refid="FileData"></include>
+        from youcloud.fileholder
+        <where>
+            file_name = #{fileName}
+        </where>
+    </select>
+
+    <!--通过仓库名删除仓库-->
+    <delete id="deleteFileHolderByName" parameterType="String" >
+        delete from youcloud.fileholder
+        <where>
+            file_name = #{fileName}
+        </where>
+    </delete>
+
+    <!--通过仓库名字查询仓库的容量-->
+    <select id="queryCapByName" parameterType="String" resultMap="BaseResultMap">
+        select file_cap from youcloud.fileholder where file_name = #{fileName}
+    </select>
+
+
+
+    <!--通过仓库名修改仓库-->
+    <update id="updateHolderByName" parameterType="String">
+        update youcloud.fileholder
+        <set>
+            <include refid="FileData"></include>
+        </set>
+        <where>
+            file_name = #{fileName}
+        </where>
+    </update>
+
+    <update id="addHolderCap" >
+        update
+            youcloud.fileholder
+        set
+            file_cap = file_cap + #{size}
+        where
+            file_name = #{fileName}
+    </update>
+
+    <update id="subHolderCap">
+        update
+            youcloud.fileholder
+        set
+            file_cap = file_cap - #{size}
+        where
+            file_name = #{fileName}
+    </update>
+
+
+    <select id="fuzzyQueryHolder" parameterType="String" resultType="com.youcloud.pojo.FileHolder">
+        select
+            *
+        from youcloud.fileholder
+        <where>
+            file_name like concat('%',#{fileName},'%')
+        </where>
+    </select>
+
+
+    <update id="renameHolder">
+        update
+            youcloud.fileholder
+        set
+            file_name = #{nName}
+        where
+            file_name = #{oName}
+    </update>
+</mapper>

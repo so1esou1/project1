@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		
+		<link rel="stylesheet" href="dist/modules/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="dist/modules/ionicons/css/ionicons.min.css">
+		<link rel="stylesheet" href="dist/modules/fontawesome/web-fonts-with-css/css/fontawesome-all.min.css">
+				
+		<link rel="stylesheet" href="dist/modules/summernote/summernote-lite.css">
+		<link rel="stylesheet" href="dist/modules/flag-icon-css/css/flag-icon.min.css">
+		<link rel="stylesheet" href="dist/css/demo.css">
+		<link rel="stylesheet" href="dist/css/style.css">
+		<link rel="stylesheet" href="plug-ins/xcConfirm/css/xcConfirm.css">
+		<link rel="stylesheet" href="plug-ins/context-menu/css/contextMenu.css">
+		<link rel="stylesheet" href="layui/css/layui.css"  media="all">
+		<script src="layui/layui.js" charset="utf-8"></script>
+		
+	</head>
+	
+	
+	<body>
+		<div class="main-sidebar" id="sideholder">
+		    <aside id="sidebar-wrapper">
+		        <div class="sidebar-brand">
+		            <a th:text="${session.sholder.fileName}">文件夹</a>
+		        </div>
+		        <div class="sidebar-user">
+		            
+		            <div class="sidebar-user-details">
+		                
+		                <div class="user-role">
+							<p>您的身份:</p>
+		                    <p th:if="${session.loginUser.userNick != session.scircle.foundName}">普通用户</p>
+		                    <p th:if="${session.loginUser.userNick == session.scircle.foundName}">管理员</p>
+		                </div>
+		            </div>
+		        </div>
+		        <ul class="sidebar-menu">
+  
+		            <li>
+		                <a><i class="ion ion-folder"></i> 资源总数:
+							<span style="color: #ff0000;" class="badge badge-primary" th:text="${session.sourcesNum}">12</span>
+						</a>
+		            </li>
+					
+		            <li>
+						<a><i class="icon ion-ios-download-outline"></i> 总大小:
+							<span style="color: #55ff00;" class="badge badge-primary" th:text="${session.sourcesSize}">12</span>
+						</a>
+		            </li>
+					
+		        </ul>
+		    </aside>
+		</div>
+	</body>
+</html>

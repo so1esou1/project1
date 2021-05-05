@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<link rel="shortcut icon" href="images/you.png">
+		<link rel="stylesheet" href="dist/modules/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="dist/modules/ionicons/css/ionicons.min.css">
+		<link rel="stylesheet" href="dist/modules/fontawesome/web-fonts-with-css/css/fontawesome-all.min.css">
+					
+		<link rel="stylesheet" href="dist/modules/summernote/summernote-lite.css">
+		<link rel="stylesheet" href="dist/modules/flag-icon-css/css/flag-icon.min.css">
+		<link rel="stylesheet" href="dist/css/demo.css">
+		<link rel="stylesheet" href="dist/css/style.css">
+		<link rel="stylesheet" href="plug-ins/xcConfirm/css/xcConfirm.css">
+		<link rel="stylesheet" href="plug-ins/context-menu/css/contextMenu.css">
+		<link rel="stylesheet" href="layui/css/layui.css"  media="all">
+		<title></title>
+		
+		<style>
+		   
+		    .bigbox{
+		            position: relative;
+		            width: 700px;
+		            height: 470px;
+		            margin: 50px auto;
+		            border: 1px solid black;
+		            background-color:#F0F7FF
+		            
+		        }
+		
+		    .box{
+		        width:700px;
+		        height: 450px;
+		        margin-left: 200px;
+		        margin-bottom: 30px;
+		    }
+		
+		    a{
+		        font-size: 2px;
+		        color:#B0B8BD;
+		    }
+		</style>
+	</head>
+	
+	
+	<body>
+	<div th:replace="commons/commons::#top"></div>
+		<div class="bigbox">
+		        <div class="box">
+					<br><br><br>
+					<h1>修改个人信息</h1>
+				<br><br><br>
+		        <form name="myform" onsubmit="doSubmit()" method="post">
+		            用户昵称：<input type="text" name="userNick" onblur="checkUname()"/> 6-18位有效字符（字母、数字、下划线）<a></a><br><br>
+		            
+		            修改密码：<input type="text" name="userPassword" onblur="checkCode1()"/> <a>　　6-18位任意字符</a><br><br>
+		            邮　　箱：<input type="text" name="userEmail" onblur="checkEmail()"/> <a>　　有效的Email地址</a><br><br>
+		            地　　址：<input type="text" name="userAddr"/> <a>　　请填写您的居住地址</a><br><br>
+		            联系方式：<input type="text" name="userContact"/> <a>　　请填写手机号码</a><br><br>
+		           
+				   
+					<input type="submit" value="提交"/> 　　<input type="reset" value="重置"/> 
+				   
+		        </form>   
+		        </div>
+		    </div>
+
+	<div th:replace="commons/commons::#footer"></div>
+	</body>
+
+	<script src="jquery-3.2.1/jquery-3.2.1.js"></script>
+	<script src="layui/layui.js" charset="utf-8"></script>
+	<script th:inline="javascript">
+	     //验证账号函数
+	     function checkUname(){
+	        //获取账号信息
+	        var uname = document.myform.userNick.value;
+	        //执行验证
+	        //if(uname.match(/^[0-9A-Za-z_]{6,18}$/) == null){
+	        if(uname.match(/^\w{6,18}$/) == null){
+	            alert("请输入6-18位有效字符（字母、数字、下划线）！");
+	            return false;
+	        }
+	        return true;
+	    }
+	
+	    //验证登录密码函数
+	    function checkCode1(){
+	        var code1 = document.myform.userPassword.value;
+	        //执行验证
+	        if(code1.match(/[\s\S*]{6,18}$/) == null){
+	            alert("请输入6-18位任意字符！");
+	            return false;
+	        }
+	        return true;
+	    }
+	
+	    
+
+
+	    //验证邮箱函数
+	    function checkEmail(){
+	        //获取信息
+	        var email = document.myform.userEmail.value;
+	        //执行验证
+	        if(email.match(/^\w+@\w+(\.\w+){1,2}$/) == null){
+	            alert("请输入正确的Email信息！");
+	            return false;
+	        }
+	        return true;
+	    }
+	    //表单提交
+	    function doSubmit(){
+	        var flag =  checkUname() && checkCode1() && checkEmail();
+			if(flag){
+				var userNick = document.getElementsByName(userNick).value;
+				var userPassword = document.getElementsByName(userPassword).value;
+				var userEmail = document.getElementsByName(userEmail).value;
+				var userAddr = document.getElementsByName(userAddr).value;
+				var userContact = document.getElementsByName(userContact).value;
+				$.ajax({
+					type:"POST",
+					url:"updateInfo",
+					data:{
+						"userNick":userNick,
+						"userPassword":userPassword,
+						"userEmail":userEmail,
+						"userAddr":userAddr,
+						"userContact":userContact
+					},
+					success:function(data) {
+						if (data == "ok"){
+							alert("修改成功，即将跳转回首页!");
+							window.location.href = "/youcloud/showMyFile";
+						}
+					}
+				});
+			}
+	    }
+	</script>
+	
+</html>

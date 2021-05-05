@@ -1,0 +1,107 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /youcloud
+    session:
+      timeout: 60m
+    tomcat:
+      uri-encoding: UTF-8
+
+
+
+spring:
+  datasource: #数据源配置
+    username: root
+    password: 123
+    url: jdbc:mysql://ymysql:3306/youcloud?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.jdbc.Driver      #数据库的驱动程序类
+    type: com.alibaba.druid.pool.DruidDataSource
+
+
+    #druid数据源专有配置
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+
+
+    filters: stat,wall,log4j
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+
+  thymeleaf:
+    cache: false
+    thymeleaf:
+      prefix: classpath:/templates/
+      suffix: .html
+      mode: HTML5
+      encoding: UTF-8
+
+
+
+
+  # 配置文件上传相关
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+
+#邮箱配置:
+  mail:
+    #smtp服务主机  qq邮箱则为smtp.qq.com
+    host: smtp.163.com
+    #服务协议
+    protocol: smtp
+    # 编码集
+    default-encoding: UTF-8
+    #发送邮件的账户
+    username: w1401142897@163.com
+    #授权码
+    password: FGPXBCVHVMZPZHPF
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: smtp.163.com
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+
+  mvc:
+    static-path-pattern: /**
+
+
+logging:
+  file:
+    name: log/youcloud.log
+  level:
+    root: info
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true      #驼峰命名
+  mapper-locations: classpath:mybatis/mapper/*.xml   #mapper的映射
+  #config-location: classpath:mybatis/mybatis-config.xml
+  type-aliases-package: com.youcloud.pojo
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+
+
+

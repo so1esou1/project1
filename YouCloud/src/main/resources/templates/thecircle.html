@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<title>朋友圈详情,也是文件夹总页面</title>
+			<link rel="shortcut icon" href="images/you.png">
+			<link rel="stylesheet" href="dist/modules/bootstrap/css/bootstrap.min.css">
+			<link rel="stylesheet" href="dist/modules/ionicons/css/ionicons.min.css">
+			<link rel="stylesheet" href="dist/modules/fontawesome/web-fonts-with-css/css/fontawesome-all.min.css">
+		
+			<link rel="stylesheet" href="dist/modules/summernote/summernote-lite.css">
+			<link rel="stylesheet" href="dist/modules/flag-icon-css/css/flag-icon.min.css">
+			<link rel="stylesheet" href="dist/css/demo.css">
+			<link rel="stylesheet" href="dist/css/style.css">
+			<link rel="stylesheet" href="plug-ins/xcConfirm/css/xcConfirm.css">
+			<link rel="stylesheet" href="plug-ins/context-menu/css/contextMenu.css">
+			<link rel="stylesheet" href="layui/css/layui.css"  media="all">
+
+			<style>
+				.files-items{
+					margin-top: -20px;
+					border-bottom: 1px dashed #bdc3c7;
+					border-top: 1px dashed #bdc3c7;
+				}
+				.files-items:hover{
+					background: #F4FBFF;
+				}
+				.right-content {
+					padding-left: 300px;
+					padding-top: 125px;
+					width: 90%;
+					position: relative;
+				}
+				
+				.site-search{
+					width:10%;
+					float:right;
+					width:250px;
+					height:50px;
+					
+				}
+				#search{
+					position:relative;
+					margin-top:10px;
+					left: 500px;
+					
+				}
+				#search input{
+					top:2px;
+					padding-right:30px;
+					width:300px;
+					font-family: "Microsoft soft";
+					outline-style: none ;
+					border: 1px solid #ccc;
+				}
+				#search button{
+					position:absolute;
+					right:4px;
+					top:2px;
+					border:none;
+					padding:0;
+					width:24px;
+					height:30px;
+					background:url("images/search2.png") no-repeat scroll right center transparent;
+					direction:ltr;
+					text-indent:-9999em;
+				}
+			</style>
+	</head>
+	
+	<body>
+		<div id="app">
+			<div class="main-wrapper">
+				<div th:replace="commons/commons::#top"></div>
+				<div th:replace="commons/sidecircle::#sidecircle"></div>
+				
+		
+				<div class="right-content">
+					<section class="section">
+						<h1 class="section-header">
+							<div><i class="ion ion-folder"></i> 拥有的文件夹 <span style="color: red;font-size: 14px"></span></div>
+						
+							<div class="site-search">
+							       <div id="search">
+							           <input type="text" id="fholder" class="text" placeholder="输入关键字搜索文件夹" required="required"/>
+							           <button type="button" onclick="javascript:fuzzyHolder();" class="submit"></button>
+							       </div>
+							</div>
+						</h1>
+						
+						<div class="row">
+							<div class="col-12 col-sm-12 col-lg-12">
+								<div class="card">
+								<div class="card-body">
+									
+									<div class="row" style="margin-top: -10px;">
+										<div class="col-12 col-sm-12 col-lg-12 table-responsive">
+											<table class="table tab-bordered text-nowrap" id="files-table">
+												<tr id="files-table-title" class="empty-space">
+													<th></th>
+													<th>名称</th>
+													<th>类型</th>
+													<th>资源数</th>
+													<th>大小</th>
+												
+												</tr>
+												<tr th:each="holder:${fileHolders.list}" class="files-items folders">
+													<td><span style="display: none" th:text="${holder.fileName}"></span><i style="font-size: 24px;color: orange" class="icon ion-android-folder"></i></td>
+													<td>
+														<a th:data-a="${holder.fileName}" onclick="toSources(this.getAttribute('data-a'))"   style="font-weight: 700;color: black" th:text="${holder.fileName}">文件夹名称</a>
+													</td>
+													<td style="font-weight: 300">文件夹</td>
+													<td style="font-weight: 300" th:text="${session.sourcesCount}">10</td>
+													<td style="font-weight: 300" th:if="${holder.fileCap > 1024}" th:text="${holder.fileCap/1024 +'MB'}"></td>
+													<td style="font-weight: 300" th:if="${holder.fileCap < 1024}" th:text="${holder.fileCap +'KB'}"></td>
+													
+													<td><a th:data-b="${holder.fileName}" onclick="deleteHolder(this.getAttribute('data-b'))"   style="color: #ff0000;">删除</a></td>
+													<td><a th:data-c="${holder.fileName}" onclick="renameHolder(this.getAttribute('data-c'))"   style="color: #ff0000;">重命名</a></td>
+	
+												</tr>
+												
+											</table>
+
+
+											<div style="transform:translateX(50%);-ms-transform:translateX(50%);-webkit-transform:translateX(50%);">
+												<div class="modal-footer no-margin-top" th:if="${fileHolders.getSize() != 0}">
+													<div class="col-md-12">
+														当前第 [[${fileHolders.pageNum}]]页,共 [[${fileHolders.pages}]] 页.一共 [[${fileHolders.total}]] 条记录
+													</div>
+
+													<ul class="pagination pull-right no-margin">
+														<li th:if="${fileHolders.hasPreviousPage}">
+															<a th:href="@{/toHolder(circleName=${session.pageCircleName})}">首页</a>
+														</li>
+
+														<li class="prev" th:if="${fileHolders.hasPreviousPage}">
+															<a th:href="@{/toHolder(circleName=${session.pageCircleName},pageNum=${fileHolders.prePage})}">
+																<i style="color: #00FF00" class="icon ion-ios-arrow-back">上一页</i>
+															</a>
+														</li>
+
+														<li class="next" th:if="${fileHolders.hasNextPage}">
+															<a th:href="@{/toHolder(circleName=${session.pageCircleName},pageNum=${fileHolders.nextPage})}">
+																<i style="color: #00FF00" class="icon ion-ios-arrow-forward"></i>
+															</a>
+														</li>
+
+														<li>
+															<a th:if="${fileHolders.hasNextPage}"  th:href="@{/toHolder(circleName=${session.pageCircleName},pageNum=${fileHolders.pages})}">尾页</a>
+														</li>
+													</ul>
+												</div>
+											</div>
+										
+										
+										</div>
+									</div>
+
+									<div class="row" th:if="${fileHolders.getSize() == 0}">
+										<div class="col-12 col-sm-12 col-lg-12">
+											<div class="alert alert-primary alert-has-icon alert-dismissible show fade">
+												<div class="alert-icon"><i class="ion ion-ios-lightbulb-outline"></i></div>
+												<div class="alert-body">
+													<button class="close" data-dismiss="alert">
+														<span>×</span>
+													</button>
+													<div class="alert-title">朋友圈中还没有创建文件夹~~~</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-12">
+											<div class="float-left">
+
+												<a th:data-circle="${circle.circleID}" onclick="foundHolder(this.getAttribute('data-circle'))" class="btn btn-sm btn-outline-success"><i class="icon ion-plus"></i> 创建文件夹</a>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							</div>
+						</div>
+
+
+
+					</section>
+				</div>
+				<div th:replace="commons/commons::#footer"></div>
+			</div>
+		</div>
+		<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+		<script src="jquery-3.2.1/jquery-3.2.1.js"></script>
+		<script src="layui/layui.js" charset="utf-8"></script>
+		<script src="plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
+		<script src="plug-ins/xcConfirm/js/xcConfirm.js"></script>
+		<script th:inline="javascript">
+			function deleteHolder(fileName){
+				var res = delconf();
+				if(res){
+					$.ajax({
+						type:"POST",
+						url:"deleteHolder",
+						data:{
+							"fileName":fileName
+						},
+						success:function (data) {
+							if (data == "ok"){
+								alert("文件夹删除成功");
+								window.location.reload();
+							}
+							if (data == "error"){
+								alert("您没有权限删除该文件！请联系本群管理员!");
+								return false;
+							}
+						}
+					});
+				}else{
+					return false;
+				}
+			}
+
+
+
+			function renameHolder(fileName){
+				var newName = window.prompt("请输入想要修改的名称:","");
+				if(newName){
+					$.ajax({
+						type:"POST",
+						url:"renameHolder",
+						data:{
+							"fileName":fileName,
+							"newName":newName
+						},
+						success:function (data) {
+							if (data == "ok"){
+								alert("修改成功！");
+								window.location.reload();
+							}
+							if (data == "error1"){
+								alert("您没有权限修改文件夹名！请联系本群管理员!");
+								return false;
+							}
+							if (data == "error2"){
+								alert("修改文件名失败!请检查是否重名");
+								return false;
+							}
+						}
+					});
+				}else if(newName === ""){
+					alert("请输入名字");
+					return false;
+				}else {
+					return false;
+				}
+			}
+			
+			
+			function toSources(fileName){
+				window.location.href = "/youcloud/toSources?fileName="+fileName;
+			}
+			
+
+			function foundHolder (circleID) {
+				var fileName = window.prompt("请输入想要创建的文件夹的名称:","");
+				if (fileName){
+					$.ajax({
+						type:"POST",
+						url:"foundHolder",
+						data:{
+							"fileName":fileName,
+							"circleID":circleID
+						},
+						success:function (data) {
+							if (data == "ok"){
+								alert("创建成功！");
+								window.location.reload();
+							}
+							if (data == "error1"){
+								alert("您没有权限创建文件夹！请联系本群管理员!");
+								return false;
+							}
+							if (data == "error2"){
+								alert("添加文件夹失败!文件夹已存在!");
+								return false;
+							}
+						}
+					});
+				}else if(fileName === ""){
+					alert("请输入名字!");
+					return false;
+				}else {
+					return false;
+				}
+
+
+			}
+			
+			
+			function delconf(){
+				var msg = "确认删除此文件夹吗?会同时删除内部已上传资源!";
+				if (confirm(msg)==true){
+					return true;
+				}else{
+					return false;
+				}
+			}
+			
+			function renameconf(){
+				str = prompt("请输入想要修改的名称:");
+				return str;
+			}
+			
+			function foundconf(){
+				alert("fsdf");
+				strn = prompt("请输入想要创建的文件夹的名称:");
+				return strn;
+			}
+			
+			
+			function fuzzyHolder(){
+				var fileName = document.getElementById("fholder").value;
+				if(fileName.length > 0){
+					window.location.href = "/youcloud/fuzzyHolder?fileName="+fileName;
+				}else {
+					alert("请检查输入是否合法");
+					return false;
+				}
+				
+			}
+			
+		</script>
+		<script src="dist/modules/jquery.min.js"></script>
+		<script src="dist/modules/popper.js"></script>
+		<script src="dist/modules/tooltip.js"></script>
+		<script src="dist/modules/bootstrap/js/bootstrap.min.js"></script>
+		<script src="dist/modules/nicescroll/jquery.nicescroll.min.js"></script>
+		<script src="dist/modules/scroll-up-bar/dist/scroll-up-bar.min.js"></script>
+		<script src="dist/js/sa-functions.js"></script>
+
+		<script src="dist/modules/chart.min.js"></script>
+		<script src="dist/modules/summernote/summernote-lite.js"></script>
+
+		<script src="dist/js/scripts.js"></script>
+		<script src="dist/js/custom.js"></script>
+		<script src="dist/js/demo.js"></script>
+		<script src="dist/modules/chart.min.js"></script>
+		
+	</body>
+</html>

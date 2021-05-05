@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<title>资源页</title>
+		
+				<link rel="shortcut icon" href="images/you.png">
+				<link rel="stylesheet" href="dist/modules/bootstrap/css/bootstrap.min.css">
+				<link rel="stylesheet" href="dist/modules/ionicons/css/ionicons.min.css">
+				<link rel="stylesheet" href="dist/modules/fontawesome/web-fonts-with-css/css/fontawesome-all.min.css">
+			
+				<link rel="stylesheet" href="dist/modules/summernote/summernote-lite.css">
+				<link rel="stylesheet" href="dist/modules/flag-icon-css/css/flag-icon.min.css">
+				<link rel="stylesheet" href="dist/css/demo.css">
+				<link rel="stylesheet" href="dist/css/style.css">
+				<link rel="stylesheet" href="plug-ins/xcConfirm/css/xcConfirm.css">
+				<link rel="stylesheet" href="plug-ins/context-menu/css/contextMenu.css">
+				<link rel="stylesheet" href="layui/css/layui.css"  media="all">
+	
+		<style>
+			.right-content {
+				padding-left: 300px;
+				padding-top: 125px;
+				width: 90%;
+				position: relative;
+			}
+
+			.site-search{
+				width:10%;
+				float:right;
+				width:250px;
+				height:50px;
+
+			}
+			#search{
+				position:relative;
+				margin-top:10px;
+				left: 500px;
+
+			}
+			#search input{
+				top:2px;
+				padding-right:30px;
+				width:300px;
+			}
+			#search button{
+				position:absolute;
+				right:4px;
+				top:2px;
+				border:none;
+				padding:0;
+				width:24px;
+				height:30px;
+				background:url("images/search2.png") no-repeat scroll right center transparent;
+				direction:ltr;
+				text-indent:-9999em;
+			}
+		</style>
+	</head>
+	
+	
+	<body>
+		<div id="app">
+			<div class="main-wrapper">
+				<div  th:replace="commons/commons::#top"></div>
+
+				<div th:replace="commons/sideholder::#sideholder"></div>
+				
+		
+				<div class="right-content">
+					<section class="section">
+						<h1 class="section-header">
+							<div><i class="ion ion-folder"></i> 全部资源 </div>
+						
+							<div class="site-search">
+							       <div id="search">
+							           <input type="text" id="fsource" class="text" placeholder="输入关键字搜索资源" required="required"/>
+							           <button type="button" onclick="javascript:fuzzySource();" class="submit"></button>
+							       </div>
+							</div>
+							
+						</h1>
+						<div class="row">
+							<div class="col-12 col-sm-12 col-lg-12" >
+								<div class="card">
+								<div class="card-body">
+									<nav aria-label="breadcrumb" class="empty-space">
+										<ol class="breadcrumb">
+											
+											<li class="breadcrumb-item"><a
+								
+													th:href="@{/toHolder(circleName=${session.scircle.circleName})}"
+													title="返回上一层"><i
+													class="icon ion-arrow-return-left"></i>回到文件夹的目录</a>
+											</li>
+										</ol>
+									</nav>
+									<div class="row" style="margin-top: -10px;">
+										<div class="col-12 col-sm-12 col-lg-12 table-responsive">
+											<table class="table tab-bordered text-nowrap" id="files-table">
+												<tr id="files-table-title" class="empty-space">
+													<th></th>
+													<th>文件名</th>
+													<th>类型</th>
+													<th>大小</th>
+													<th>上传时间</th>
+													
+												</tr>
+												
+												<tr th:each="s:${sources.list}" class="files-items files">
+													<td><span style="display: none" th:text="${s.sourceAddr}"></span>
+														<i style="font-size: 24px;color: #2ea5ff" th:if="${s.sourceType} eq '文档'" class="icon ion-document-text"></i>
+														<i style="font-size: 24px;color: #aaff00" th:if="${s.sourceType} eq '图像'" class="icon ion-image"></i>
+														<i style="font-size: 24px;color: #ff5500" th:if="${s.sourceType} eq '视频'" class="icon ion-ios-videocam"></i>
+														<i style="font-size: 24px;color: #d4dc35" th:if="${s.sourceType} eq '音乐'" class="icon ion-ios-musical-notes"></i>
+														<i style="font-size: 24px;color: #343A40" th:if="${s.sourceType} eq '其他'" class="icon ion-document"></i>
+													</td>
+													<td>
+														<a th:href="@{/downloadSource(fileName=${s.sourceFileName},sourceName=${s.sourceName})}" style="font-weight: 700;color: #845ff4;" th:text="${s.sourceName}">资源名</a>
+													</td>
+													<td style="font-weight: 300" th:if="${s.sourceType} eq '文档'">文档</td>
+													<td style="font-weight: 300" th:if="${s.sourceType} eq '图像'">图像</td>
+													<td style="font-weight: 300" th:if="${s.sourceType} eq '视频'">视频</td>
+													<td style="font-weight: 300" th:if="${s.sourceType} eq '音乐'">音乐</td>
+													<td style="font-weight: 300" th:if="${s.sourceType} eq '其他'">其他</td>
+													
+													<td style="font-weight: 300" th:if="${s.sourceSize > 1024}" th:text="${s.sourceSize/1024 +'MB'}"></td>
+													<td style="font-weight: 300" th:if="${s.sourceSize < 1024}" th:text="${s.sourceSize +'KB'}"></td>
+													<td style="font-weight: 300" th:text="${#dates.format(s.uploadTime,'yyyy-MM-dd HH:mm')}">时间</td>
+													
+													<td><a th:href="@{/downloadSource(fileName=${holder.fileName},sourceName=${s.sourceName})}" style="color: #2a8aff;">下载</a></td>
+													<td><a th:data-a="${holder.fileName}" th:data-b="${s.sourceName}" onclick="deleteSource(this.getAttribute('data-a'),this.getAttribute('data-b'))"  style="color: #ff0000;">删除</a></td>
+													<td><a th:data-s="${s.sourceName}" onclick="renameSource(this.getAttribute('data-s'))"  style="color: #ff0000;">重命名</a></td>
+													
+													
+												</tr>
+											</table>
+										</div>
+
+										<div style="transform:translateX(50%);-ms-transform:translateX(50%);-webkit-transform:translateX(50%);">
+											<div class="modal-footer no-margin-top" style="left: 50%;" th:if="${sources.getSize() != 0}">
+												<div class="col-md-12">
+													当前第 [[${sources.pageNum}]]页,共 [[${sources.pages}]] 页.一共 [[${sources.total}]] 条记录
+												</div>
+
+												<ul class="pagination pull-right no-margin">
+													<li th:if="${sources.hasPreviousPage}">
+														<a th:href="@{/toSources(fileName=${session.pageFileName})}">首页</a>
+													</li>
+
+													<li class="prev" th:if="${sources.hasPreviousPage}">
+														<a th:href="@{/toSources(fileName=${session.pageFileName},pageNum=${sources.prePage})}">
+															<i style="color: #00FF00" class="icon ion-ios-arrow-back"></i>
+														</a>
+													</li>
+													<!--遍历条数-->
+														<li th:each="nav:${sources.navigatepageNums}">
+															<a th:href="@{/toSources(fileName=${session.pageFileName},pageNum=${nav})}" th:text="${nav}" th:if="${nav != sources.pageNum}"></a>
+															<span style="font-weight: bold;background: #6faed9;" th:if="${nav == sources.pageNum}" th:text="${nav}" ></span>
+														</li>
+
+													<li class="next" th:if="${sources.hasNextPage}">
+														<a th:href="@{/toSources(fileName=${session.pageFileName},pageNum=${sources.nextPage})}">
+															<i style="color: #00FF00" class="icon ion-ios-arrow-forward"></i>
+														</a>
+													</li>
+
+													<li>
+														<a th:if="${sources.hasNextPage}" th:href="@{/toSources(fileName=${session.pageFileName},pageNum=${sources.pages})}">尾页</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									
+									</div>
+
+
+									<div class="row" th:if="${sources.getSize() == 0}">
+										<div class="col-12 col-sm-12 col-lg-12">
+											<div class="alert alert-primary alert-has-icon alert-dismissible show fade">
+												<div class="alert-icon"><i class="ion ion-ios-lightbulb-outline"></i></div>
+												<div class="alert-body">
+													<button class="close" data-dismiss="alert">
+														<span>×</span>
+													</button>
+													<div class="alert-title">此文件夹中没有任何文件~~~</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-12">
+											<div class="float-left" id="uploader">
+												
+												
+												<form action="uploadSource" method="post" class="layui-form" enctype="multipart/form-data" >
+												     <div class="layui-form-item layui-inline">
+												          <div class="layui-inline">
+												                <input type="file" name="file"  lay-verify="required"  autocomplete="off" class="layui-input layui-upload">
+																<input type="submit" lay-verify="required" value="上传"/>
+																<input type="reset"><p/>
+												                
+												         </div>
+												     </div>    
+												</form>
+					
+												
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							</div>
+						</div>
+						
+					</section>
+				</div>
+				<div th:replace="commons/commons::#footer"></div>
+			</div>
+		</div>
+		<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+		<script src="jquery-3.4.1.js"></script>
+		<script src="layui/layui.js" charset="utf-8"></script>
+		<script th:inline="javascript">
+			function deleteSource(fileName,sourceName){
+				var res = delconf();
+				if(res){
+					$.ajax({
+						type:"GET",
+						url:"deleteSource",
+						data:{
+							"fileName":fileName,
+							"sourceName":sourceName
+						},
+						success:function (data) {
+							if (data == "ok"){
+								alert("资源删除成功");
+								window.location.reload();
+							}
+							if (data == "error"){
+								alert("抱歉，您没有权限进行删除!请联系管理员删除!");
+								return false;
+							}
+						}
+					});
+
+				}else{
+					return false;
+				}
+			}
+
+
+			function renameSource(oldSourceName){
+
+				var newName = window.prompt("请输入想要修改的名称:","");
+				if(newName){
+					$.ajax({
+						type:"POST",
+						url:"renameSource",
+						data:{
+							"oldSourceName":oldSourceName,
+							"newName":newName
+						},
+						success:function (data) {
+							if (data == "ok"){
+								alert("修改成功！");
+								window.location.reload();
+							}
+							if (data == "error1"){
+								alert("您没有权限修改文件名！请联系本群管理员!");
+								return false;
+							}
+							if (data == "error2"){
+								alert("修改文件名失败!请检查是否重名");
+								return false;
+							}
+						}
+					});
+				}else if(newName === ""){
+					alert("请输入名字!");
+					return false;
+				}else{
+					return false;
+				}
+
+			}
+
+
+
+			function delconf(){
+				var msg = "确认删除此资源吗?";
+				if (confirm(msg)==true){
+					return true;
+				}else{
+					return false;
+				}
+			}	
+			
+			function renameconf(){
+				str = prompt("请输入想要修改的名称:");
+				return str;
+			}
+	
+			
+			
+		
+			
+			
+			function fuzzySource(){
+				var sourceName = document.getElementById("fsource").value;
+				
+				if(sourceName.length > 0){
+					window.location.href = "/youcloud/fuzzySource?sourceName="+sourceName;
+				}
+			}
+			
+			
+			
+
+			
+			
+		</script>
+		<script src="plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
+		<script src="plug-ins/xcConfirm/js/xcConfirm.js"></script>
+		<script src="layui/layui.js" charset="utf-8"></script>
+		<script src="dist/modules/jquery.min.js"></script>
+		<script src="dist/modules/popper.js"></script>
+		<script src="dist/modules/tooltip.js"></script>
+		<script src="dist/modules/bootstrap/js/bootstrap.min.js"></script>
+		<script src="dist/modules/nicescroll/jquery.nicescroll.min.js"></script>
+		<script src="dist/modules/scroll-up-bar/dist/scroll-up-bar.min.js"></script>
+		<script src="dist/js/sa-functions.js"></script>
+		
+		<script src="dist/modules/chart.min.js"></script>
+		<script src="dist/modules/summernote/summernote-lite.js"></script>
+		
+		<script src="dist/js/scripts.js"></script>
+		<script src="dist/js/custom.js"></script>
+		<script src="dist/js/demo.js"></script>
+		<script src="dist/modules/chart.min.js"></script>
+	</body>
+</html>

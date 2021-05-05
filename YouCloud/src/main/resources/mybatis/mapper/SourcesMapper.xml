@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youcloud.mapper.SourcesMapper">
+    <cache/>
+    <resultMap id="BaseResultMap" type="com.youcloud.pojo.Sources">
+        <id column="source_name" property="sourceName" />
+        <result column="source_addr" property="sourceAddr" />
+        <result column="source_size" property="sourceSize" />
+        <result column="source_type" property="sourceType" />
+        <result column="source_userid" property="sourceUserID" />
+        <result column="upload_time" property="uploadTime" />
+        <result column="source_file_name" property="sourceFileName" />
+    </resultMap>
+    <sql id="SourcesData">source_addr,source_name,source_size,source_type,source_userid,upload_time,source_file_name</sql>
+
+
+    <!--添加资源-->
+    <insert id="addSource" parameterType="com.youcloud.pojo.Sources">
+        insert into
+        youcloud.sources (source_addr,source_name,source_size,source_type,source_userid,upload_time,source_file_name)
+        values
+        (#{sourceAddr},#{sourceName},#{sourceSize},#{sourceType},#{sourceUserID},#{uploadTime},#{sourceFileName});
+    </insert>
+
+    <!--根据资源的名字修改资源的信息-->
+    <update id="updateSource" parameterType="String">
+        update youcloud.sources
+        <set>
+            <include refid="SourcesData"></include>
+        </set>
+        <where>
+            source_name = #{sourceName}
+        </where>
+    </update>
+
+    <!--根据资源的名字，删除资源-->
+    <delete id="deleteSource" parameterType="String">
+        delete from youcloud.sources
+        <where>
+            source_name = #{sourceName}
+        </where>
+    </delete>
+
+    <!--根据文件夹的名字删除资源-->
+    <delete id="deleteSourcesByHolder" parameterType="String">
+        delete from youcloud.sources,youcloud.fileholder
+        <where>
+            source_file_name = #{sourceFileName}
+        </where>
+    </delete>
+
+    <!--根据文件夹的名字查询资源-->
+    <select id="querySourcesByHolder" parameterType="String" resultMap="BaseResultMap" resultType="list">
+        select
+        <include refid="SourcesData"></include>
+        from youcloud.sources
+        <where>
+            source_file_name = #{sourceFileName}
+        </where>
+    </select>
+
+    <!--根据资源的名字查询资源-->
+    <select id="querySourcesByName" parameterType="String" resultMap="BaseResultMap" resultType="list">
+        select
+        <include refid="SourcesData"></include>
+        from youcloud.sources
+        <where>
+            source_name = #{sourceName}
+        </where>
+    </select>
+
+    <!--通过用户id查询其上传的文件名-->
+    <select id="querySourcesByID" resultType="String" resultMap="BaseResultMap">
+        select
+        <include refid="SourcesData"></include>
+        from youcloud.sources
+        where source_userid = #{userID}
+    </select>
+
+    <!--通过用户id统计其上传的资源总数-->
+    <select id="countByUserID" resultType="Integer">
+        select count(source_addr) from youcloud.sources where source_userid = #{userID};
+    </select>
+
+    <!--通过文件夹名字统计其拥有的资源数-->
+    <select id="countByHolder" resultType="Integer">
+        select
+            count(source_addr)
+        from
+            youcloud.sources,youcloud.fileholder
+        where
+            source_file_name = #{sourceFileName}
+
+    </select>
+
+
+    <!--模糊查询资源-->
+    <select id="fuzzyQuerySource" parameterType="String" resultType="list" resultMap="BaseResultMap">
+        select
+        <include refid="SourcesData"></include>
+        from youcloud.sources
+        <where>
+            source_name like concat('%',#{sn},'%')
+        </where>
+    </select>
+
+
+    <update id="renameSource">
+        update youcloud.sources
+        set source_name = #{nName}
+        where source_name = #{oName}
+    </update>
+
+</mapper>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+         updateCheck="false">
+
+    <diskStore path="./tempdir/Tmp_EnCache"/>
+
+    <defaultCache
+            eternal="false"
+            maxElementsInMemory="5000"
+            overflowToDisk="true"
+            diskPersistent="true"
+            timeToIdleSeconds="1800"
+            timeToLiveSeconds="1800"
+            memoryStoreEvictionPolicy="LRU"/>
+
+
+</ehcache>

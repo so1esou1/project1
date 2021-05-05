@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title>关于</title>
+<link rel="shortcut icon" href="images/you.png">
+<link rel="stylesheet" type="text/css" href="css/style.css"/>
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href='https://fonts.useso.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.useso.com/css?family=Lato:400,900,700,300,100' rel='stylesheet' type='text/css'>
+<link href='https://fonts.useso.com/css?family=Roboto+Slab:400,700,300,100' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="layui/css/layui.css"  media="all">
+
+    <script src="https://ajax.useso.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+</head>
+
+<body background="images/bg.jpg">
+<div th:replace="commons/commons::#top"></div>
+
+<div class="header">
+	<div class="container">
+
+    	<div class="row">
+        	<div class="col-md-12 col-sm-12 col-xs-12">
+            	<div class="logo pull-left col-md-6 col-sm-6 col-xs-12">
+                	<h1>友云</h1>
+                </div>
+                
+            </div>
+            
+        </div>
+    </div>
+</div>
+<div class="about text-center">
+	<div class="container">
+    	<div class="row">
+        	<div class="col-md-12">
+            	<div class="title">
+                	<h3>关于友云</h3>
+                </div>
+                <div class="desc">
+                	<p>友云(YouCloud)是由so1osou1创建的社交性云盘，是由个人开发的线上资源共享工具，群主将资源分享到群中并管理资源，群友可以自由下载、交流。适用于共同爱好群体和学习工作团体</p>
+                </div>
+            </div>
+            <div class="featurebox col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+            	<div class="feature text-left">
+                	<h4>功能</h4>
+                    <p style="color: black">1、资源共享:每个群提供初始的1G(1024MB)容量，群主群员可以在群中自由分享资源，可以通过提升群等级提高群容量，注重于资源分享的便利<br>
+						2、消息沟通:使用消息队列，可以让群友即使进行沟通<br />
+						3、保护安全隐私:使用相关安全策略，避免群友、资源的安全泄漏<br>
+						4、映射关系:一个用户对应多个朋友圈，一个朋友圈对应多个文件夹，一个文件夹对应多个资源。
+					</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+            	<div class="feature text-left">
+                	<h4>使用技术栈</h4>
+                    <p style="color: black">使用JAVA语言，以SpringBoot框架为基础，融合SSM(Spring、SpringMVC、Mybatis)三大框架，数据库上选择MySQL数据库，配套druid数据池,缓存使用的是EnCache。安全方面使用了SpringSecurity,消息队列使用RabbitMQ实现。前端使用到了html5、css、JavaScript、thymeleaf、BootStrap等,使用docker技术部署到阿里云服务器中，使用Nginx作为网关。文件上传下载存储使用的是FTP服务器。</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+            	<div class="feature text-left">
+                	<h4>未来维护方向</h4>
+                    <p style="color: black">增加朋友圈等级升级制度，添加SpringCloud技术进行练手，添加Redis模拟共同关注、下载量等功能。同时优化前端显示</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+            	<div class="feature text-left">
+                	<h4>作者</h4>
+                    <p style="color: black">so1osou1,2000年生，湖南省长沙市中南大学公共管理学院劳动与社会保障专业2022级学生，现正大三。出于个人对计算机的兴趣进行自大二开始自学JAVA语言.个人邮箱:wxz1401142897@163.com</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+</div>
+<div th:replace="commons/commons::#footer"></div>
+
+<script src="jquery-3.2.1/jquery-3.2.1.js"></script>
+<script src="layui/layui.js" charset="utf-8"></script>
+<script src="plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
+<script src="plug-ins/xcConfirm/js/xcConfirm.js"></script>
+
+</body>
+</html>

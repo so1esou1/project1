@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<title>我的朋友圈</title>
+			
+			<link rel="shortcut icon" href="images/you.png">
+			<link rel="stylesheet" href="dist/modules/bootstrap/css/bootstrap.min.css">
+			<link rel="stylesheet" href="dist/modules/ionicons/css/ionicons.min.css">
+			<link rel="stylesheet" href="dist/modules/fontawesome/web-fonts-with-css/css/fontawesome-all.min.css">
+
+			<link rel="stylesheet" href="dist/modules/summernote/summernote-lite.css">
+			<link rel="stylesheet" href="dist/modules/flag-icon-css/css/flag-icon.min.css">
+			<link rel="stylesheet" href="dist/css/demo.css">
+			<link rel="stylesheet" href="dist/css/style.css">
+			<link rel="stylesheet" href="plug-ins/xcConfirm/css/xcConfirm.css">
+			<link rel="stylesheet" href="plug-ins/context-menu/css/contextMenu.css">
+			<link rel="stylesheet" href="css/example.css" />
+			<link rel="stylesheet" href="layui/css/layui.css"  media="all">
+			
+			<style>
+					.files-items{
+						margin-top: -20px;
+						border-bottom: 1px dashed #bdc3c7;
+						border-top: 1px dashed #bdc3c7;
+					}
+					.files-items:hover{
+						background: #F4FBFF;
+					}
+				</style>
+	</head>
+	
+	<body>
+	<div id="app">
+		<div class="main-wrapper">
+			<div th:replace="commons/commons::#top"></div>
+
+
+		<div class="main-content">
+			<section class="section">
+				<h1 class="section-header">
+					<div><i class="icon ion-person-stalker"></i> 我的朋友圈 <span style="color: red;font-size: 14px"></span></div>
+				</h1>
+				<div class="row">
+					<div class="col-12 col-sm-12 col-lg-12">
+						<div class="card">
+						<div class="card-body">
+							
+							<div class="row" style="margin-top: -10px;">
+								<div class="col-12 col-sm-12 col-lg-12 table-responsive">
+									<table class="table tab-bordered text-nowrap" id="files-table">
+										<tr id="files-table-title" class="empty-space">
+											<th></th>
+											<th>朋友圈名称</th>
+											<th>类型</th>
+											<th>人数</th>
+											<th>朋友圈等级</th>
+											<th>管理员</th>
+											
+										</tr>
+										<tr th:each="c:${circle.list}" class="files-items folders">
+											<td><span style="display: none" th:text="${c.circleID}"></span><i style="font-size: 24px;color: #479798;" class="icon ion-person-stalker"></i></td>
+											<td>
+												<a th:href="@{/toHolder(circleName=${c.circleName})}" style="font-weight: 700;color: black" th:text="${c.circleName}">朋友圈名</a>
+											</td>
+											<td style="font-weight: 300" >朋友圈</td>
+											<td style="font-weight: 300" th:text="${c.circleUserCount}">用户数</td>
+											<td style="font-weight: 300" th:text="${c.capLevel}">等级1</td>
+											<td style="font-weight: 300" th:text="${c.foundName}">某某某</td>
+											
+											
+											<td><a th:data-a="${c.circleName}" onclick="deleteCircle(this.getAttribute('data-a'))"  style="color: #ff0000;">删除</a></td>
+											<td><a th:data-b="${c.circleName}" onclick="quitCircle(this.getAttribute('data-b'))"  style="color: #ff0000;">退出</a></td>
+											<td><a th:data-c="${c.circleName}" onclick="renameCircle(this.getAttribute('data-c'))"  style="color: #ff0000;">重命名</a></td>
+										</tr>
+										
+										
+									</table>
+								</div>
+
+								<div style="transform:translateX(50%);-ms-transform:translateX(50%);-webkit-transform:translateX(50%);">
+									<div class="modal-footer no-margin-top" th:if="${circle.getSize() != 0}">
+										<div class="col-md-12">
+											当前第 [[${circle.pageNum}]]页,共 [[${circle.pages}]] 页.一共 [[${circle.total}]] 条记录
+										</div>
+
+										<ul class="pagination pull-right no-margin">
+											<li th:if="${circle.hasPreviousPage}">
+												<a th:href="@{/toCircle}">首页</a>
+											</li>
+
+											<li class="prev" th:if="${circle.hasPreviousPage}">
+												<a th:href="@{/toCircle(pageNum=${circle.prePage})}">
+													<i style="color: #00FF00" class="icon ion-ios-arrow-back"></i>
+												</a>
+											</li>
+											<!--遍历条数-->
+												<li th:each="nav:${circle.navigatepageNums}">
+
+													<a th:href="@{/toCircle(pageNum=${nav})}" th:text="${nav}" th:if="${nav != circle.pageNum}"></a>
+													<span style="font-weight: bold;background: #6faed9;" th:if="${nav == circle.pageNum}" th:text="${nav}" ></span>
+												</li>
+
+											<li class="next" th:if="${circle.hasNextPage}">
+												<a th:href="@{/toCircle(pageNum=${circle.nextPage})}">
+													<i style="color: #00FF00" class="icon ion-ios-arrow-forward"></i>
+												</a>
+											</li>
+
+											<li>
+												<a th:if="${circle.hasNextPage}" th:href="@{/toCircle(pageNum=${circle.pages})}" >尾页</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							
+							
+							</div>
+
+							<div class="row" th:if="${circle.getSize() == 0}">
+								<div class="col-12 col-sm-12 col-lg-12">
+									<div class="alert alert-primary alert-has-icon alert-dismissible show fade">
+										<div class="alert-icon"><i class="ion ion-ios-lightbulb-outline"></i></div>
+										<div class="alert-body">
+											<button class="close" data-dismiss="alert">
+												<span>×</span>
+											</button>
+											<div class="alert-title">还没有加入任何朋友圈~~~</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-12">
+									<div class="float-left">
+										<a href="javaScript:joinCircle()" class="btn btn-sm btn-outline-success"><i class="icon ion-plus"></i> 加入朋友圈</a>
+										<a href="javaScript:foundCircle()" class="btn btn-sm btn-outline-success"><i class="icon ion-plus"></i> 创建我的朋友圈</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					</div>
+				</div>
+				
+				
+			</section>
+		</div>
+		<div th:replace="commons/commons::#footer"></div>
+	</div>
+</div>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+	<script src="jquery-3.2.1/jquery-3.2.1.js"></script>
+	<script src="layui/layui.js" charset="utf-8"></script>
+
+<script src="plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
+<script src="plug-ins/xcConfirm/js/xcConfirm.js"></script>
+<script th:inline="javascript">
+
+	function deleteCircle(circleName){
+		var res = delconf();
+		if(res){
+			$.ajax({
+				type:"POST",
+				url:"deleteCircle",
+				data:{
+					"circleName":circleName
+				},
+				success:function (data) {
+					if (data == "ok"){
+						alert("删除成功！");
+						window.location.reload();
+					}
+					if (data == "error"){
+						alert("删除失败!权限不足，请联系管理员");
+						return false;
+					}
+				}
+			});
+		}else{
+			return false;
+		}
+	}
+	
+		
+	function quitCircle(circleName){
+
+		var res = quitconf();
+		if(res){
+
+			$.ajax({
+				type:"POST",
+				url:"quitCircle",
+				dataType:"json",
+				data:{
+					"circleName":circleName
+				},
+				success:function (data) {
+					if (data == "ok"){
+						alert("退出成功！");
+						window.location.reload();
+					}
+					if (data == "error"){
+						alert("您是创始人，不能退出这个朋友圈，只能进行删除!");
+						return false;
+					}
+				}
+			});
+		}else{
+			return false;
+		}
+	}
+	
+	
+	function renameCircle(oldName){
+
+		var newName = window.prompt("请输入想要修改的名称:","");
+		if(newName){
+			$.ajax({
+				type:"POST",
+				url:"renameCircle",
+				data:{
+					"newName":newName,
+					"oldName":oldName
+				},
+				success:function (data) {
+					if (data == "ok"){
+						alert("重命名成功！");
+						window.location.reload();
+					}
+					if (data == "error1"){
+						alert("重命名失败!权限不足，请联系管理员!");
+						return false;
+					}
+					if (data == "error2"){
+						alert("重命名失败!与其他朋友圈重名!");
+						return false;
+					}
+				}
+			});
+		}else if (newName === ""){
+			alert("请输入名字");
+			return false;
+		}else {
+			return false;
+		}
+
+
+	}
+	
+	
+	function joinCircle(){
+		var circleName = window.prompt("请输入想要加入的朋友圈名称:","");
+		var circlePwd = window.prompt("请输入其入群密码:","");
+		if (circleName && circlePwd){
+			$.ajax({
+				type:"POST",
+				url:"joinCircle",
+				data:{
+					"circleName":circleName,
+					"circlePwd":circlePwd
+				},
+				success:function (data) {
+					if (data == "ok"){
+						alert("加入成功！可以参与资源共享了");
+						window.location.reload();
+					}
+					if (data == "error1"){
+						alert("请输入进群密码!");
+						return false;
+					}
+					if (data == "error2"){
+						alert("进群密码错误!");
+						return false;
+					}
+					if (data == "error3"){
+						alert("不存在这个朋友圈!");
+						return false;
+					}
+				}
+			});
+		}else if(circleName === "" || circlePwd === ""){
+			alert("请输入圈名或密码");
+			return false;
+		}else {
+			return false;
+		}
+	}
+
+
+	function foundCircle(){
+		var circleName = window.prompt("请输入想要创建的朋友圈名称:","");
+		var circlePwd = window.prompt("请为您的朋友圈设置进群密码:","");
+		if (circleName && circlePwd){
+			$.ajax({
+				type:"POST",
+				url:"foundCircle",
+				data:{
+					"circleName":circleName,
+					"circlePwd":circlePwd
+				},
+				success:function (data) {
+					if (data == "ok"){
+						alert("创建成功，可以去上传资源了");
+						window.location.reload();
+					}
+					if (data == "error1"){
+						alert("请输入朋友圈名");
+						return false;
+					}
+					if (data == "error2"){
+						alert("朋友圈已存在，请更换名字");
+						return false;
+					}
+				}
+			});
+		}else if(circleName === "" || circlePwd === ""){
+			alert("请输入圈名或密码");
+			return false;
+		}else {
+			return false;
+		}
+
+
+	}
+	
+	
+	function delconf(){
+		var msg = "会同步删除圈中所有文件夹和资源，请确认！";
+		if (confirm(msg)==true){
+			return true;
+		}else{
+			return false;
+			
+		}
+	}
+	
+	function quitconf(){
+		var msg = "您真的确定要退出此群吗？请确认！";
+		if (confirm(msg)==true){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	function renameconf(){
+		str = prompt("请输入想要修改的名称:");
+		if (str){
+			return str;
+		}else {
+			return false;
+		}
+
+	}
+	
+	function joinCircle1(){
+		str1 = prompt("请输入想要加入的朋友圈名称:");
+		if(str1){
+			return str1;
+		}else {
+			return false;
+		}
+
+
+	}
+	function joinCircle2(){
+		str2 = prompt("请输入其入群密码:");
+		if (str2){
+			return str2;
+		}else {
+			return false;
+		}
+
+
+	}
+	
+	function foundCircle1(){
+		str1 = prompt("请输入想要创建的朋友圈名称:");
+		if(str1){
+			return str1;
+		}else {
+			return false;
+		}
+
+	}
+	function foundCircle2(){
+		str2 = prompt("请为您的朋友圈设置进群密码:");
+		if (str2){
+			return str2;
+		}else {
+			return false;
+		}
+
+	}
+	
+	
+	
+</script>
+<script src="dist/modules/jquery.min.js"></script>
+<script src="dist/modules/popper.js"></script>
+<script src="dist/modules/tooltip.js"></script>
+<script src="dist/modules/bootstrap/js/bootstrap.min.js"></script>
+<script src="dist/modules/nicescroll/jquery.nicescroll.min.js"></script>
+<script src="dist/modules/scroll-up-bar/dist/scroll-up-bar.min.js"></script>
+<script src="dist/js/sa-functions.js"></script>
+
+<script src="dist/modules/chart.min.js"></script>
+<script src="dist/modules/summernote/summernote-lite.js"></script>
+
+<script src="dist/js/scripts.js"></script>
+<script src="dist/js/custom.js"></script>
+<script src="dist/js/demo.js"></script>
+<script src="dist/modules/chart.min.js"></script>
+	</body>
+</html>

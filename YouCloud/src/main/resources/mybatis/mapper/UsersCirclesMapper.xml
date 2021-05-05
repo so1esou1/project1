@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.youcloud.mapper.UsersCirclesMapper">
+    <cache/>
+    
+    
+    <resultMap type="com.youcloud.pojo.User" id="resultUserMap">
+        <result property="userID" column="user_id"/>
+        <result property="userPassword" column="user_password"/>
+        <result property="userNick" column="user_nick"/>
+        <result property="userContact" column="user_contact"/>
+        <result property="userEmail" column="user_mail" />
+        <result property="userAddr" column="user_addr" />
+        <result column="user_profile" property="userProfile"/>
+        <result column="user_role" property="userRole"/>
+    </resultMap>
+
+    <resultMap id="resultCircleMap" type="com.youcloud.pojo.Circle">
+        <result property="circleID" column="circle_id"/>
+        <result property="circleName" column="circle_name"/>
+        <result property="circlePassword" column="circle_password"/>
+        <result property="cap" column="cap"/>
+        <result property="capUsed" column="cap_used"/>
+        <result property="capLevel" column="cap_level"/>
+        <result property="circleUserCount" column="circle_user_count"/>
+        <result property="foundName" column="found_name"/>
+    </resultMap>
+
+   
+    
+    <!--根据朋友圈ID获取所有的用户-->
+    <select id="getUsersByCircleID" resultMap="resultUserMap" parameterType="int">
+        select u.*,uc.circle_id
+        from user u,userscircles uc
+        where u.user_id=uc.user_id AND uc.circle_id=#{circleID}
+    </select>
+
+
+    <!--根据用户ID获取所有的朋友圈-->
+    <select id="getCirclesByUserID" resultMap="resultCircleMap" parameterType="int">
+        select c.*,uc.user_id
+        FROM circle c,userscircles uc
+        WHERE c.circle_id=uc.circle_id AND uc.user_id=#{userID}
+    </select>
+    
+
+    <!--新增用户，单独增加userID，这里也会发生改变-->
+    <insert id="addUserUsersCircles" parameterType="Integer">
+        insert into
+            youcloud.userscircles (user_id)
+        values
+            (#{userID});
+    </insert>
+
+
+    <!--增加一个朋友圈,单独增加circleID，这里也会更改-->
+    <insert id="addCircleUsersCircles" parameterType="Integer">
+        insert into
+            youcloud.userscircles (circle_id)
+        values
+            (#{circleID});
+    </insert>
+
+
+
+    <!--删除一条对应信息，这里也会更改-->
+    <delete id="deleteUsersCircles">
+        delete from youcloud.userscircles
+        <where>
+            user_id = #{userID} and circle_id = #{circleID}
+        </where>
+    </delete>
+
+    <!--通过用户名删除联系-->
+    <delete id="deleteUsersCirclesByUser">
+        delete from youcloud.userscircles
+        <where>
+            user_id = #{userID}
+        </where>
+    </delete>
+
+    <!--通过朋友圈ID删除联系-->
+    <delete id="deleteUsersCirclesByCircle">
+        delete from youcloud.userscircles
+        <where>
+            circle_id = #{circleID}
+        </where>
+    </delete>
+
+
+    <!--增加对应联系方式-->
+    <insert id="addUsersCircles">
+        insert into
+            youcloud.userscircles (user_id,circle_id)
+        values
+            (#{userID},#{circleID});
+    </insert>
+
+
+
+    <!--修改联系方式-->
+    <update id="updateUsersCirclesByUser">
+        update youcloud.userscircles
+        set circle_id = #{circleID}
+        where user_id = #{userID}
+    </update>
+
+
+    <!--修改联系方式，通过circleID-->
+    <update id="updateUsersCirclesByCircle">
+        update youcloud.userscircles
+        set user_id = #{userID}
+        where circle_id = #{circleID}
+    </update>
+
+
+</mapper>

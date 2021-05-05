@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title></title>
+		
+		<link rel="stylesheet" href="dist/modules/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="dist/modules/ionicons/css/ionicons.min.css">
+		<link rel="stylesheet" href="dist/modules/fontawesome/web-fonts-with-css/css/fontawesome-all.min.css">
+				
+		<link rel="stylesheet" href="dist/modules/summernote/summernote-lite.css">
+		<link rel="stylesheet" href="dist/modules/flag-icon-css/css/flag-icon.min.css">
+		<link rel="stylesheet" href="dist/css/demo.css">
+		<link rel="stylesheet" href="dist/css/style.css">
+		<link rel="stylesheet" href="plug-ins/xcConfirm/css/xcConfirm.css">
+		<link rel="stylesheet" href="plug-ins/context-menu/css/contextMenu.css">
+		<link rel="stylesheet" href="layui/css/layui.css"  media="all">
+		
+	</head>
+	<body>
+		
+		<div class="main-sidebar" id="sidecircle">
+		    <aside id="sidebar-wrapper">
+		        <div class="sidebar-brand">
+		            <div style="font-weight: bold;" >[[${session.scircle.circleName}]] 圈</div>
+		        </div>
+		        <div class="sidebar-user">
+		           
+		            <div class="sidebar-user-details">
+		                <div class="user-name">朋友圈ID：<span style="color: #0095D9;">[[${session.scircle.circleID}]]</span></div>
+		                <div class="user-role">
+							<p>您的身份:</p>
+		                    <p style="font-weight: bold;color: red" th:if="${session.loginUser.userNick != session.scircle.foundName}">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;普通用户</p>
+		                    <p style="font-weight: bold;color: green" th:if="${session.loginUser.userNick == session.scircle.foundName}">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;管理员</p>
+		                </div>
+		            </div>
+		        </div>
+		        <ul class="sidebar-menu">
+		            
+		            <li>
+		                <a><i class="icon ion-ios-help-outline"></i><span>群密码:&nbsp &nbsp <span style="color: #55ff00;"  th:text="${session.scircle.circlePassword}">12</span></span></a>
+		            </li>
+					<li >
+					    <a><i class="icon ion-flame"></i> 成员人数:&nbsp &nbsp
+							<span style="color: #000000;" class="badge badge-primary" >[[${session.scircleUserCount}]]人</span>
+						</a>
+					</li>
+		            
+		            <li >
+		                <a><i class="ion ion-folder"></i> 资源总数:
+							<span style="color: #ff5500;" class="badge badge-primary">[[${session.sourcesCount}]]</span>
+						</a>
+		            </li>
+		            <li>
+		                <a><i class="icon ion-ios-download-outline"></i> 容量使用情况:
+							<span style="color: #ff5500;" class="badge badge-primary"> [[${session.fileHoldersSize}]] / [[${session.scircle.cap}]]</span>
+						</a>
+
+					</li>
+															
+					<li>
+					    <a><i class="icon ion-speedometer"></i> 圈等级:
+							<span style="color: #00ff7f;" class="badge badge-primary"> [[${session.scircle.capLevel}]]</span>
+						</a>
+					</li>
+					
+					<li>
+					    <a><i class="icon ion-person"></i> 管理人:
+							<span style="color: #000000;" > [[${session.scircle.foundName}]]</span>
+						</a>
+					</li>				           		            
+		        </ul>
+		    </aside>
+		</div>	
+			
+		<script src="layui/layui.js" charset="utf-8"></script>
+		<script>
+			layui.use('element', function(){
+			  var element = layui.element;
+			});
+		</script>
+	</body>
+</html>
